@@ -1,9 +1,11 @@
-111111111孔
-222222222孔
 
 define(function(require, exports, module) {
   
-    kong----kongk====
+    mamamamammdmdmddddd---
+    mamamamammdmdmddddd---
+    mamamamammdmdmddddd---
+    mamamamammdmdmddddd---
+
     var HomePage = {
         getToday: function() {
             var hot_recommend = $(".hot_recommend");  
@@ -18,7 +20,8 @@ define(function(require, exports, module) {
             var url;
             $.ajax({
                 type: "GET",
-                url: "/homesetting/v5?image_model=jpg",
+                url: "newInterface",
+
                 success: function(data) {
                     console.log("get today data:", data);
 
@@ -167,18 +170,15 @@ define(function(require, exports, module) {
         getUserStatus: function() {
             var that = this;
             $.ajax({
-                type: "GET",
-                url: "//th5.m.zhe800.com/api/auth/islogin?callback=?&n=" + Math.random(),
-                // url: "//th5hsm.zhe800.com/api/auth/islogin?callback=?&n=" + Math.random(),
-                dataType: "jsonp",
-                success: function(data) {
-                    if (typeof data == "object") {
-                        is_login = data.islogin;
-                        if (is_login) {
-                            $(".footer .out").show();
-                            $(".footer .in").hide();
-                            getuserInfo();
-                           
+
+
+
+
+
+
+
+
+
                         } else {
                             $(".footer .in").show();
                             $(".footer .out").hide();
@@ -192,7 +192,6 @@ define(function(require, exports, module) {
                 }
             });
         },
-  
         getBrandList: function() {
             var _this = this;
             browserWidth = $('body').width();
