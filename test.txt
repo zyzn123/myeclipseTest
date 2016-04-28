@@ -1,3 +1,516 @@
 111111111孔
 222222222孔
-333333333孔
+
+define(function(require, exports, module) {
+  
+    kong----kongk====
+    var HomePage = {
+        getToday: function() {
+            var hot_recommend = $(".hot_recommend");  
+            //默认跳转地址
+            var urlarr = [     
+                "/m/list/all?url_name=all&category_name=今日更新&time=today",
+                "/m/day10/day10",
+                "/m/forecast/forecastv2?pub_page_from=m",
+                "/m/list/mobile?url_name=mobile&category_name=手机周边",
+                "/m/list/baoyou?url_name=baoyou&category_name=9块9包邮"
+            ];
+            var url;
+            $.ajax({
+                type: "GET",
+                url: "/homesetting/v5?image_model=jpg",
+                success: function(data) {
+                    console.log("get today data:", data);
+
+                 
+                    if (typeof data == "object" && data.length) {
+                       
+                        /*今日更新、每日十件、精选预告、iphone周边/手机周边、9块9包邮、品牌团、值得逛、优品汇、特卖商城-----展示---start*/
+                       var htmlstr = '';
+                        
+                        //console.log("data["+i+"].url="+data[i].url);
+                        
+                        if (data[0].point == "1") {
+
+                            urlarr[0] = data[0].url;
+                        }
+                        $(".today").data("url", urlarr[0]);
+                        $(".tit.t1").text(data[0].title);
+                        htmlstr += '<dd class="txt">' + data[0].content + '</dd><dd class="img"><img src="' + data[0].pic + '" width="108" height="108" alt=""><span></span></dd></dl>';
+                        $(".today").append(htmlstr);
+
+                        var rec_item = $(".hot_recommend").find('dl');
+                        for (var i = 0; i < data.length; i++) {
+
+                            //console.log("data["+i+"].point="+data[i].point+"   "+ data.length)
+
+                            if (data[i].point == "1") {
+                                urlarr[i] = data[i].url;
+                            }
+                            rec_item.eq(i).data('url', urlarr[i]);
+                            if(i==4){
+                               // console.log("data数据展示："+data[i].title);
+                                rec_item.eq(i).find('.tit').text("9块9包邮");
+                            }else{
+                             rec_item.eq(i).find('.tit').text(data[i].title);
+                            }
+                           // rec_item.eq(i).find('.tit').text(data[i].title);
+                            
+                            htmlstr = '<dd class="txt">' + data[i].content + '</dd><dd class="img"><img src="' + data[i].pic + '" width="45" height="45" alt=""></dd></ dl>';
+                            rec_item.eq(i).append(htmlstr);
+                        }
+                       /*今日更新、每日十件、精选预告、iphone周边/手机周边、9块9包邮、品牌团、值得逛、优品汇、特卖商城-----展示---end*/
+
+
+                       /*根据手机型号来展示具体显示，如果为iphone手机，则显示iphone周边，否则显示手机周边------start*/
+                        var agentInfo = navigator.userAgent,ua_text;
+                        if (/iphone os/gi.test(agentInfo)) {
+                            ua_text = "iphone周边";
+                        } else{
+                            ua_text = "手机周边";
+                        }
+                        $($('.tit')[3]).html(ua_text);
+                        /*根据手机型号来展示具体显示，如果为iphone手机，则显示iphone周边，否则显示手机周边------end*/
+
+                          
+                        /*今日更新、每日十件、精选预告、iphone周边/手机周边、9块9包邮的点击次数统计----start */
+                        $.zheui.bindTouchGoto($(".hot_recommend").find('dl'), function(obj, i) {
+
+                            var _this = obj;
+                            //统计
+                            //var t_obj = {};
+                            //switch (i) {
+                            //    case 0:
+                            //        t_obj.d = "4";
+                            //        break;
+                            //    case 1:
+                            //        t_obj.d = "9";
+                            //        break;
+                            //    case 2:
+                            //        t_obj.d = "1";
+                            //        break;
+                            //    case 3:
+                            //        t_obj.d = "2";
+                            //        break;
+                            //    case 4:
+                            //        t_obj.d = "3";
+                            //        break;
+                            //
+                            //}
+                            //var index = i+1;
+                            //$.tracklog.action("ic",'', '{eventvalue:}');
+                            switch (i){
+                                case 0:
+                                    $.tracklog.action("operation",track_data, '{eventvalue:today,eventindex:0}');
+                                    break;
+                                case 1:
+                                    $.tracklog.action("operation",track_data, '{eventvalue:ten,eventindex:0}');
+                                    break;
+                                case 2:
+                                    $.tracklog.action("operation",track_data, '{eventvalue:forcast,eventindex:0}');
+                                    break;
+                                case 3:
+                                    $.tracklog.action("operation",track_data, '{eventvalue:phone,eventindex:0}');
+                                    break;
+                                case 4:
+                                    $.tracklog.action("operation",track_data, '{eventvalue:baoyou,eventindex:0}');
+                                    break;
+                            }
+                            window.location.href = _this.attr("data-url");
+                        });
+                         /*今日更新、每日十件、精选预告、iphone周边/手机周边、9块9包邮的点击次数统计----end */
+
+
+                        /*品牌团、值得逛、优品汇、特卖商城的点击次数统计----end */
+                        $.zheui.bindTouchGoto($(".hot_bottom").find("dl"), function(obj, i) {
+                         
+                            var _this = obj;
+                            window.location.href = _this.attr("data-url");
+                            //统计
+                            //var t_obj = {};
+                            //switch (i) {
+                            //    case 5:
+                            //        t_obj.m = "1";
+                            //        break;
+                            //    case 6:
+                            //        t_obj.m = "2";
+                            //        break;
+                            //}
+                            //$.tracklog.action("ic", t_obj);
+                            switch (i){
+                                case 0:
+                                    $.tracklog.action("operation",track_data, '{eventvalue:brand,eventindex:0}');
+                                    break;
+                                case 1:
+                                    $.tracklog.action("operation",track_data, '{eventvalue:guang,eventindex:0}');
+                                    break;
+                                case 2:
+                                    $.tracklog.action("operation",track_data, '{eventvalue:youph,eventindex:0}');
+                                    break;
+                                case 3:
+                                    $.tracklog.action("operation",track_data, '{eventvalue:store,eventindex:0}');
+                                    break;
+                            }
+                        });
+                      /*品牌团、值得逛、优品汇、特卖商城的点击次数统计----end */
+
+                    } else {
+                        console.log("数据加载失败，请稍后再试");
+                    }
+                },
+                timeout: 20000,
+                error: function() {
+                    console.log("网络异常");
+                }
+            });
+        },
+        getUserStatus: function() {
+            var that = this;
+            $.ajax({
+                type: "GET",
+                url: "//th5.m.zhe800.com/api/auth/islogin?callback=?&n=" + Math.random(),
+                // url: "//th5hsm.zhe800.com/api/auth/islogin?callback=?&n=" + Math.random(),
+                dataType: "jsonp",
+                success: function(data) {
+                    if (typeof data == "object") {
+                        is_login = data.islogin;
+                        if (is_login) {
+                            $(".footer .out").show();
+                            $(".footer .in").hide();
+                            getuserInfo();
+                           
+                        } else {
+                            $(".footer .in").show();
+                            $(".footer .out").hide();
+                            //登录
+                            $.zheui.bindTouchGoto($("#login"), function(obj) {
+                                var url = encodeURIComponent(window.location.href);
+                                window.location.href = "//m.zhe800.com/login?return_to=" + url;
+                            });
+                        }
+                    }
+                }
+            });
+        },
+  
+        getBrandList: function() {
+            var _this = this;
+            browserWidth = $('body').width();
+            var url;
+            $.ajax({
+                type: "get",
+                url: 'http://m.zhe800.com/m/brand/top',
+                data: { per_page: 10, user_type: user_type, user_role: user_role, student: isStudent, image_model: this.isWebp ? 'webp' : 'jpg' },
+                dataType: "jsonp",
+                success: function (data) {
+                    var ele = $('.brand_sale').find('ul');
+                	if ($.isPlainObject(data) && Array.isArray(data.objects) && data.objects.length > 0) {
+                		var s = '', list = document.querySelector('.brand_sale ul');
+                		data.objects.forEach(function (brand) {
+                			var dealid = '', price = '', id='';
+                			if (Array.isArray(brand.deals) && $.isPlainObject(brand.deals[0])) {
+                				id = (brand.id + '').replace(/>/g, '&gt;').replace(/</g, '&lt;');
+                				dealid = (brand.deals[0].id + '').replace(/>/g, '&gt;').replace(/</g, '&lt;');
+                				price = parseInt(brand.deals[0].price);
+                				price = price >= 0 ? ('&yen' + (price / 100)) : '';
+                			}
+                			s += '<li><a href="' + '/m/brand/list?brand_id=' + id + '&include_deal_id=' + dealid + '"><div class="brand_img" style="background-image: url('
+								+ (brand.square_image + '').replace(/\.\d+x\d+\.jpg/g, '.180x180.jpg').replace(/>/g, '&gt;').replace(/</g, '&lt;') + ')"><i class="ico_price">'
+								+ price + '</i></div><div class="brand_info">'
+								+ (brand.name + '').replace(/>/g, '&gt;').replace(/</g, '&lt;') + '</div></a></li>';
+                		});
+                		// s = s + s + s + s + s + s + s;
+                		s += '<li class="more-brands"><a href="/m/brand"></a></li>';
+                		list.innerHTML = s;
+                		list.scroller = new iScroll(list.parentNode, {
+                			scrollY: false,
+                			scrollX: true,
+                			snap: 'li',
+                			scrollbars: false,
+                			eventPassthrough: true,
+                			click: true,
+                			disableTouch: false
+                		});
+                        //跳转品牌团商品列表页
+                        $brandListItems = ele.find("li");
+                        $.zheui.bindTouchGoto($brandListItems, function(element,index) {
+                                var brandId = element.attr("data-id");
+                                var id = element.attr("id");
+                                index = index + 1;
+                                $.tracklog.action("brand",track_data, '{eventvalue:'+ id +',eventindex:'+index+'}');
+                                window.location.href = "/m/brand/list?brand_id=" + brandId + "&include_deal_id=" + id + "";
+                        });
+                	} else {
+                		$('.brand_sale_list').hide();
+                	}
+                }
+            });
+        },
+        loadlist: function() {
+            var list_W = $(".list_W");
+            var list = list_W.find(".list");
+            var zhe_list_li = $(".list_W .list").find("li");
+            isload = true;
+            if(this.isWebp){
+                // modify by wangguanjia for feature_122144,deals from big data
+                // old /m/index/deals?
+                var url = "/m/index/recommend/deals?image_type=small&image_model=webp&page=" + pagenum + "&per_page=20&user_type=" + user_type + "&user_role=" + user_role;
+            }else{
+                var url = "/m/index/recommend/deals?image_type=small&image_model=jpg&page=" + pagenum + "&per_page=20&user_type=" + user_type + "&user_role=" + user_role;
+            };
+            $.ajax({
+                type: "GET",
+                url: url,
+                success: function(data) {
+                    isload = false;
+                    if ($.os.ios) {
+                        setTimeout(function() {
+                            $(".bg_layer3").hide();
+                        }, 300);
+                    }
+                    if (typeof data == "object") {
+                        var __data = data.objects;
+                        if (__data.length) {
+                            pagenum++;
+                            var has_next = data.meta.has_next;
+                            var load_img = "//i0.tuanimg.com/ms/zhe800wx/dist/img/img_placehd2.png";
+                            var htmlstr = '<ul>';
+                            var jf_arr0 = [],
+                                jf_arr1 = [],
+                                jf_arr2 = [],
+                                jf_arr3 = [],
+                                jf_arr4 = [],
+                                jf_arr5 = [];
+                            for (var i = 0; i < __data.length; i++) {
+                                var zhuanxiang = __data[i].zhuanxiang; //手机专享
+                                var today = __data[i].today; //0：旧，1：新（new）
+                                var source_type = __data[i].source_type; //商品来源：1--是商城，0--是淘宝/天猫
+                                var shop_type = __data[i].shop_type; //商品类型 1天猫 0 淘宝 4特卖商城
+                                var deal_type = __data[i].deal_type; 
+                                var brand_product_type = __data[i].brand_product_type;
+                                var baoyou = __data[i].baoyou; //包邮
+                                var begin_time = __data[i].begin_time.replace("-", "/"); //开始时间
+                                var list_price = __data[i].list_price / 100; // 原价
+                                var price = __data[i].price / 100; //折扣价
+                                var zhekou = (price / list_price * 10).toFixed(1); //折扣
+                                var oos = __data[i].oos; //0代表未卖光，1代表已卖光
+                                var now = new Date().valueOf();
+                                var start = false;
+                                var begin_time = new Date(begin_time).valueOf();
+                                var brand_id = __data[i].brand_id; //品牌团id
+                                if (now < begin_time) {
+                                    start = true;
+                                }
+                                //跳转链接
+                                var url = "";
+                                if (source_type == 1) {
+                                    url = $.tracklog.outUrl($.zheui.domain + "/m/detail/" + __data[i].id, {
+                                        liststatus: 1,
+                                        dealId: __data[i].id
+                                    });
+                                    //url = $.tracklog.outUrl($.zheui.domain + "/m/detail/detail?id=" + __data[i].id);
+                                } else {
+                                    //console.log(__data[i].wap_url);
+                                    url = $.tracklog.outUrl(__data[i].wap_url, {
+                                        liststatus: 1,
+                                        dealId: __data[i].id
+                                    });
+                                    //url = $.tracklog.outUrl(__data[i].wap_url);
+                                }
+
+                                var baoyou_txt = "不包邮";
+                                if (baoyou) {
+                                    baoyou_txt = "包邮";
+                                }
+                                if (brand_id > 0) {
+                                    //补足进入品牌团列表页参数
+                                    htmlstr += '<li data-url="'+$.zheui.domain+'/m/brand/list?brand_id=' + brand_id + '&include_deal_id=' + __data[i].id + '"  data-id="' + __data[i].id + '" class="flag_out"><a href="javascript:void(0);"><div class="pro_img">';
+                                } else {
+                                    htmlstr += '<li data-url="' + url + '" data-id="' + __data[i].id + '" class="flag_out"><a href="javascript:void(0);"><div class="pro_img">';
+                                }
+                                htmlstr += '<img src="' + load_img + '" alt="' + __data[i].short_title + '"  data-url="' + __data[i].square_image + '">';
+                                if (brand_id > 0) {
+                                    htmlstr += '<i class="ico_type_1" ></i>';
+                                } else if (deal_type > 0 && deal_type != 2) {
+                                    htmlstr += '<i class="ico_type_' + __data[i].deal_type + '" ></i>';
+                                } else if (deal_type == 2 && today == 0) {
+                                    htmlstr += '<i ></i>';
+                                } else if (today == 1) {
+                                    htmlstr += '<i class="ico_new" ></i>';
+                                }
+                                htmlstr += '</div>';
+                                htmlstr += '<div class="pro_info"><div class="tit_area">';
+                                if (oos == 1) {
+                                    htmlstr += '<strong class="pad10">' + __data[i].short_title + '</strong>' +
+                                        '<i class="ico qiangwan"></i>';
+                                } else {
+                                    if (start) {
+                                        htmlstr += '<strong class="pad10">' + __data[i].short_title + '</strong>' +
+                                            '<i class="ico nostart"></i>';
+                                    } else if (zhuanxiang) {
+                                        htmlstr += '<strong class="pad42">' + __data[i].short_title + '</strong>' +
+                                            '<i class="ico phone"></i>';
+                                    } else if (today == 1) {
+                                        htmlstr += '<strong class="pad10">' + __data[i].short_title + '</strong>';
+                                    } else {
+                                        htmlstr += '<strong>' + __data[i].short_title + '</strong>';
+                                    }
+                                }
+
+                                htmlstr += '</div>';
+
+                                htmlstr += '<div class="attr"><span class="price">&yen;' + price + '</span><del>&yen;' + list_price + '</del>';
+                                if (source_type == 1) {
+                                    if (usegrade != -1) {
+                                        var jf = __data[i].scores["z" + usegrade];
+                                        //htmlstr += '<span class="fr jf">+' + jf + '积分</span>';
+                                    } else {
+                                        for (var j = 0; j < 5; j++) {
+                                            eval("jf_arr" + j).push(__data[i].scores["z" + j]);
+                                        }
+                                        //htmlstr += '<span class="fr jf"></span>';
+                                    }
+                                }
+                                htmlstr += '</div><div class="attr"><span class="line">' + baoyou_txt + '</span><span class="sales">已售<font class="fc_index_orangeRed">' + __data[i].sales_count + '</font>件</span>';
+                                if (source_type == 1) {
+                                    htmlstr += '<span class="">特卖商城</span>';
+                                } else if (source_type == 0 && shop_type == 1) {
+                                    htmlstr += '<span class="">去天猫</span>';
+                                } else if (source_type == 0 && shop_type == 0) {
+                                    htmlstr += '<span class="">去淘宝</span>';
+                                }
+                                htmlstr += '</div></div></a></li>';
+
+
+                            }
+                            htmlstr += '</ul>';
+                            list.append(htmlstr);
+                            list.find(".loading").remove();
+                            list.find("ul").imglazyload({
+                                "imgattr": "data-url"
+                            });
+                            var zhe_list_li = $(".list_W .list").find('ul').last().find("li");
+                            $.zheui.bindTouchGoto(zhe_list_li, function(obj) {
+                                var url_id = obj.attr("data-url");
+                                var dealId = obj.attr("data-id");
+                                bd.setChart();
+                                if (url_id.length > 0) {
+                                    window.location.href = url_id;
+                                }
+                            });
+
+                            //曝光统计
+                            exposure.exposure_ev(list.find("ul"), "li");
+                            if (usegrade == -1) {
+                                //发送ajax请求，获取用户等级
+                                $.ajax({
+                                    type: "GET",
+                                    url: "//zapi.zhe800.com/profile/grade?callback=?",
+                                    dataType: "jsonp",
+                                    success: function(udata) {
+                                        if (udata.status == 0) {
+                                            usegrade = 0;
+                                        } else {
+                                            usegrade = udata.grade.grade;
+                                            if (usegrade > 5) {
+                                                usegrade = 5;
+                                            }
+                                        }
+                                        jf_init(list.find("ul").eq(0), eval("jf_arr" + usegrade));
+                                    },
+                                    error: function() {
+                                        usegrade = 0;
+                                        jf_init(list.find("ul").eq(0), jf_arr0);
+                                    }
+                                });
+                            }
+
+                            if (has_next) {
+                                list_W.find(".loading_more").text("点击查看更多>>").show();
+                            } else {
+                                list_W.find(".loading_more").text("亲，没有更多了").show().addClass("no_more");
+                            }
+
+                        } else {
+                            if (!has_next) {
+                                list_W.find(".loading_more").text("亲，没有更多了").show().addClass("no_more");
+                            }
+                        }
+
+                    } else {
+                        list.find(".loading").text("数据加载失败，请稍后再试");
+                    }
+                },
+                timeout: 20000,
+                error: function() {
+                    isload = false;
+                    console.log("网络异常");
+                    if (pagenum == 1) {
+                        list.find(".loading").text("数据加载失败，请稍后再试");
+                    } else {
+                        list_W.find(".loading_more").text("数据加载失败，请稍后再试");
+                    }
+                    if ($.os.ios) {
+                        $(".bg_layer3").hide();
+                    }
+                }
+            });
+        },
+        /**
+         * 绑定touch事件，消除冒泡阻塞
+         */
+        bindTouchEvent: function($els, callback) {
+            var isMove;
+            $els.each(function(index, ele) {
+                $(ele).bind({
+                    "touchstart": function(e) {
+                        touch_startX = e.touches[0].pageX;
+                        touch_startY = e.touches[0].pageY;
+                        isMove = false;
+                    },
+                    "touchmove": function(e) {
+                        touch_moveEndX = e.touches[0].pageX;
+                        touch_moveEndY = e.touches[0].pageY;
+                        touch_X = touch_moveEndX - touch_startX;
+                        touch_Y = touch_moveEndY - touch_startY;
+                        if (Math.abs(touch_X) >= 3 || Math.abs(touch_Y) >= 3) {
+                            isMove = true;
+                        }
+                    },
+                    "touchend": function(e) {
+                        if (isMove) {
+                            return;
+                        }
+                        if (typeof callback === "function") {
+                            callback($(this), index);
+                        }
+                    }
+                });
+            });
+        },
+        init: function() {
+            //第三方渠道，触宝加载时不触发选择用户功能
+            var utm_source = $.zheui.getUrlKeyVal("utm_source");
+            if (utm_source != 'A_chubaohy') {
+                //非第一次进入，并且未选中身份跳转至身份选择页
+                if (user_role == "" && user_type == 1) {
+                    this.seleRole();
+                }
+            };
+            if($.os.android){this.isWebp = true;}
+            this.isBaidu();
+            this.getCategory();
+            this.getBanner();
+            this.getToday();
+            this.getUserStatus();
+            bigData.init();
+        }
+    };
+    //获取首页列表数据(第二页异步)
+    var pagenum = 2;
+    var isload = false;
+    var usegrade = -1;
+    HomePage.init();
+
+
+});
