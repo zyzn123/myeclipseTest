@@ -16,9 +16,10 @@ define(function(require, exports, module) {
             var url;
             $.ajax({
                 type: "GET",
-                // 老接口/homesetting/v5，新接口/m/homesetting
-                url: "/m/homesetting?image_model=jpg",
-                //url: "/homesetting/v5?image_model=jpg",
+                // 老接口lodInterface
+                url: "lodInterface",
+                //////////////////////
+
                 success: function(data) {
                     console.log("get today data:", data);
 
@@ -167,18 +168,23 @@ define(function(require, exports, module) {
         getUserStatus: function() {
             var that = this;
             $.ajax({
-                type: "GET",
-                url: "//th5.m.zhe800.com/api/auth/islogin?callback=?&n=" + Math.random(),
-                // url: "//th5hsm.zhe800.com/api/auth/islogin?callback=?&n=" + Math.random(),
-                dataType: "jsonp",
-                success: function(data) {
-                    if (typeof data == "object") {
-                        is_login = data.islogin;
-                        if (is_login) {
-                            $(".footer .out").show();
-                            $(".footer .in").hide();
-                            getuserInfo();
-                            that.isNewCustomer();
+
+
+
+
+
+                            that.test();
+
+
+
+
+
+
+
+
+
+
+
                         } else {
                             $(".footer .in").show();
                             $(".footer .out").hide();
@@ -192,68 +198,11 @@ define(function(require, exports, module) {
                 }
             });
         },
-        isNewCustomer:function(){
-            var that = this;
-            $.ajax({
-                type: "GET",
-                url: "/m/novice",
-                dataType: "jsonp",
-                success: function(data) {
-                    if (typeof data == "object") {
-                         console.log("ddsd",data);
-                         if(data.isNovice==true){           
-                            that.getNewCustomer();
-                         }else{
-
-                         }
-                    }
-                }
-            });
+        test:function(){
+           XXXXX
         },
-        getNewCustomer:function(){
-                $.ajax({
-                    type: "GET",
-                    url: "/m/home/model4/banner",
-                    success: function(data) {
-                        var ele = $(".newUserShow");
-                        console.log("data:", data);
-                        if (typeof data == "object" && data.length) {
-                           var html='';
-                            for (var i = 0; i < data.length; i++) {
-                               if(i==0){
-                                html+="<div class=\"jrgxItem\" data-url='"+data[i].Url+"'><span class='tit'>"+data[i].Title+"</span><p class='img'><img src='"+data[i].Pic+"'/></p></div>";
+       
 
-                               }else if(i==1){
-                                html+="<div class=\"jxygItem\" data-url='"+data[i].Url+"'><span class='tit'>"+data[i].Title+"</span><p class='img'><img src='"+data[i].Pic+"'/></p></div>";
-         
-                               }else if(i==2){
-                                html+="<div class=\"zdgItem\" data-url='"+data[i].Url+"'><span class='tit'>"+data[i].Title+"</span><p class='img'><img src='"+data[i].Pic+"'/></p></div>";
-         
-                               }else{
-
-                               }
-                            }
-                            ele.append(html);
-                            ele.css("display","block");
-
-                            /*4区点击打开链接----start */
-                            $.zheui.bindTouchGoto($(".newUserShow").find("div"), function(obj, i) {
-                            var _this = obj;
-                            window.location.href = _this.attr("data-url");
-                            
-
-                            });
-                            /*4区点击打开链接----end */
-
-                        }
-                    },
-                    timeout: 20000,
-                    error: function() {
-                        console.log("网络异常");
-                    }
-                });
-        },
-        // 废弃
         getBrandList: function() {
             var _this = this;
             browserWidth = $('body').width();
